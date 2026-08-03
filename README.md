@@ -44,6 +44,8 @@ The goal of this project is to build an engaging, user-friendly, and informative
 - Club members profiles
 - Faculty/advisor information
 - Team representation
+- <img width="1920" height="930" alt="team" src="https://github.com/user-attachments/assets/66e07821-78e0-4102-aa10-d765f0855bd7" />
+
 - <img width="1920" height="892" alt="Events" src="https://github.com/user-attachments/assets/fc6d9603-5a1c-489d-b42a-57dbb2928c18" />
 
 
