@@ -70,14 +70,13 @@ document.addEventListener("DOMContentLoaded", function () {
           .insert([payload]);
 
         if (error) throw error;
-
-        showFormMessage(msgEl, "Aapki application submit ho gayi hai! Hum jald hi aapse rabta karenge.", "success");
+showFormMessage(msgEl, "Thank you! Your application has been received.", "success");
         membershipForm.reset();
         membershipForm.classList.remove("was-validated");
         membershipForm.querySelectorAll(".is-valid").forEach(f => f.classList.remove("is-valid"));
       } catch (err) {
         console.error(err);
-        showFormMessage(msgEl, "Submit karte waqt masla hua. Dobara koshish karein.", "error");
+        showFormMessage(msgEl,"Something went wrong while submitting. Please try again.", "error");
       } finally {
         setButtonLoading(submitBtn, false);
       }
@@ -113,13 +112,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (error) throw error;
 
-        showFormMessage(msgEl, "Aapka message bhej diya gaya hai! Hum jald jawab denge.", "success");
+        showFormMessage(msgEl, "Thank you! Your application has been received.", "success");
         contactForm.reset();
         contactForm.classList.remove("was-validated");
         contactForm.querySelectorAll(".is-valid").forEach(f => f.classList.remove("is-valid"));
       } catch (err) {
         console.error(err);
-        showFormMessage(msgEl, "Message bhejte waqt masla hua. Dobara koshish karein.", "error");
+        showFormMessage(msgEl, "Something went wrong while submitting. Please try again.", "error");
       } finally {
         setButtonLoading(submitBtn, false);
       }
