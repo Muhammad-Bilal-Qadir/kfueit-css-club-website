@@ -1,9 +1,8 @@
 /* ================================================================
    SUPABASE FORM HANDLERS
    ----------------------------------------------------------------
-   Membership form aur Contact form ko Supabase database ke sath
-   connect karta hai. Jab user form submit karta hai (aur validation
-   pass ho jati hai), data seedha Supabase table mein chala jata hai.
+   Handles form submissions for Membership and Contact Us forms,
+   inserting data directly into the connected Supabase tables.
    ================================================================ */
 
 function showFormMessage(el, text, type) {
@@ -43,45 +42,61 @@ document.addEventListener("DOMContentLoaded", function () {
   const membershipForm = document.getElementById("membershipForm");
   if (membershipForm) {
     membershipForm.addEventListener("submit", async function (e) {
-      // Agar built-in validation fail ho rahi hai to yahan kuch nahi karna
       if (!membershipForm.checkValidity()) return;
 
       e.preventDefault();
       e.stopImmediatePropagation();
 
       const msgEl = document.getElementById("membershipFormMsg");
+      if (msgEl) msgEl.style.display = "none";
+
       const submitBtn = membershipForm.querySelector('button[type="submit"]');
       setButtonLoading(submitBtn, true);
 
       const formData = new FormData(membershipForm);
       const payload = {
-        name: formData.get("name"),
-        email: formData.get("email"),
-        phone: formData.get("phone"),
-        department: formData.get("department"),
-        semester: formData.get("semester"),
-        student_id: formData.get("student_id"),
-        motivation: formData.get("motivation"),
+        name: (formData.get("name") || "").toString().trim(),
+        email: (formData.get("email") || "").toString().trim(),
+        phone: (formData.get("phone") || "").toString().trim(),
+        department: (formData.get("department") || "").toString(),
+        semester: (formData.get("semester") || "").toString(),
+        student_id: (formData.get("student_id") || "").toString().trim(),
+        motivation: (formData.get("motivation") || "").toString().trim(),
       };
 
       try {
-        const { error } = await supabaseClient
+        if (!supabaseClient) {
+          throw new Error("Supabase client is not initialized.");
+        }
+
+        const { data, error } = await supabaseClient
           .from("membership_applications")
           .insert([payload]);
 
         if (error) throw error;
 
-        showFormMessage(msgEl, "Aapki application submit ho gayi hai! Hum jald hi aapse rabta karenge.", "success");
+        showFormMessage(
+          msgEl,
+          "Your membership application has been submitted successfully. Thank you for joining KFUEIT CSS Club!",
+          "success"
+        );
         membershipForm.reset();
         membershipForm.classList.remove("was-validated");
-        membershipForm.querySelectorAll(".is-valid").forEach(f => f.classList.remove("is-valid"));
+        membershipForm.querySelectorAll(".is-valid, .is-invalid").forEach(f => {
+          f.classList.remove("is-valid");
+          f.classList.remove("is-invalid");
+        });
       } catch (err) {
-        console.error(err);
-        showFormMessage(msgEl, "Submit karte waqt masla hua. Dobara koshish karein.", "error");
+        console.error("Membership form submission error:", err);
+        showFormMessage(
+          msgEl,
+          "Unable to submit your application. Please try again.",
+          "error"
+        );
       } finally {
         setButtonLoading(submitBtn, false);
       }
-    }, true); // capture phase: is listener ko pehle chalao
+    }, true);
   }
 
   /* ---------------- CONTACT FORM ---------------- */
@@ -94,32 +109,49 @@ document.addEventListener("DOMContentLoaded", function () {
       e.stopImmediatePropagation();
 
       const msgEl = document.getElementById("contactFormMsg");
+      if (msgEl) msgEl.style.display = "none";
+
       const submitBtn = contactForm.querySelector('button[type="submit"]');
       setButtonLoading(submitBtn, true);
 
       const formData = new FormData(contactForm);
       const payload = {
-        name: formData.get("name"),
-        email: formData.get("email"),
-        phone: formData.get("phone"),
-        subject: formData.get("subject"),
-        message: formData.get("message"),
+        name: (formData.get("name") || "").toString().trim(),
+        email: (formData.get("email") || "").toString().trim(),
+        phone: (formData.get("phone") || "").toString().trim(),
+        subject: (formData.get("subject") || "").toString().trim(),
+        message: (formData.get("message") || "").toString().trim(),
       };
 
       try {
-        const { error } = await supabaseClient
+        if (!supabaseClient) {
+          throw new Error("Supabase client is not initialized.");
+        }
+
+        const { data, error } = await supabaseClient
           .from("contact_messages")
           .insert([payload]);
 
         if (error) throw error;
 
-        showFormMessage(msgEl, "Aapka message bhej diya gaya hai! Hum jald jawab denge.", "success");
+        showFormMessage(
+          msgEl,
+          "Your message has been sent successfully. We will get back to you soon.",
+          "success"
+        );
         contactForm.reset();
         contactForm.classList.remove("was-validated");
-        contactForm.querySelectorAll(".is-valid").forEach(f => f.classList.remove("is-valid"));
+        contactForm.querySelectorAll(".is-valid, .is-invalid").forEach(f => {
+          f.classList.remove("is-valid");
+          f.classList.remove("is-invalid");
+        });
       } catch (err) {
-        console.error(err);
-        showFormMessage(msgEl, "Message bhejte waqt masla hua. Dobara koshish karein.", "error");
+        console.error("Contact form submission error:", err);
+        showFormMessage(
+          msgEl,
+          "Unable to send your message. Please try again.",
+          "error"
+        );
       } finally {
         setButtonLoading(submitBtn, false);
       }
